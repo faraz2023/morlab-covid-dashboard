@@ -279,6 +279,16 @@ def filter_dataframe(df, age_group, gender_selector, occupation, week_range=def_
 
     return filtered_df
 
+# Slider -> count graph
+@app.callback(Output("week_slider", "value"), [Input("weekly_count_graph", "selectedData")])
+def update_year_slider(count_graph_selected):
+
+    if count_graph_selected is None:
+        return def_week_range
+
+    nums = [int(point["pointNumber"]) for point in count_graph_selected["points"]]
+    return [min(nums), max(nums) + 1]
+
 
 @app.callback(
     [Output("death_text", "children"),
@@ -320,10 +330,11 @@ def update_numbers(age_group, gender_selector, occupation):
         Input("age_group", "value"),
         Input("gender_selector", "value"),
         Input("occupation", "value"),
+        Input("week_slider", "value")
     ],
 )
-def make_main_figure(age_group, gender_selector, occupation):
-    filtered_df = filter_dataframe(df, age_group, gender_selector, occupation)
+def make_main_figure(age_group, gender_selector, occupation, week_range):
+    filtered_df = filter_dataframe(df, age_group, gender_selector, occupation, week_range)
     death_number = filtered_df[filtered_df["Death"] == 1].groupby('Region').size()
     
     
@@ -370,12 +381,15 @@ def make_main_figure(age_group, gender_selector, occupation):
 
 
 # # Main graph -> individual graph
-@app.callback(Output("individual_graph", "figure"), [Input("main_graph", "hoverData"),
-                                                     Input("line_type", "value")],
-                                                   [ State("age_group", "value"),
-                                                    State("gender_selector", "value"),
-                                                    State("occupation", "value"),])
-def make_individual_figure(main_graph_hover,line_type,age_group,gender_selector,occupation):
+@app.callback(Output("individual_graph", "figure"),
+              [Input("main_graph", "hoverData"),
+                    Input("line_type", "value")],
+                [ State("age_group", "value"),
+                    State("gender_selector", "value"),
+                    State("occupation", "value"),
+                    State("week_slider", "value")
+                                                     ])
+def make_individual_figure(main_graph_hover,line_type,age_group,gender_selector,occupation, week_range):
     layout_individual = copy.deepcopy(layout)
 
     if main_graph_hover is None:
@@ -387,7 +401,7 @@ def make_individual_figure(main_graph_hover,line_type,age_group,gender_selector,
  
     
     chosen = np.asarray([point["customdata"] for point in main_graph_hover["points"]]).flatten()
-    filtered_df = filter_dataframe(df, age_group, gender_selector, occupation)
+    filtered_df = filter_dataframe(df, age_group, gender_selector, occupation, week_range)
     weekly_data = filtered_df[(filtered_df["Episode week"] != 99)& (filtered_df['Region'] == int(chosen[0]))]
 
     
