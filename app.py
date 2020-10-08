@@ -484,4 +484,5 @@ def make_count_figure(age_group, gender_selector, occupation, week_range):
     figure = dict(data=data, layout=layout_count)
     return figure
 
-app.run_server()
+if __name__ == '__main__':
+    app.run_server(debug=True)
