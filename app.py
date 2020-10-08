@@ -15,6 +15,8 @@ def_week_range = [0,53]
 app = dash.Dash(
      __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}]
  )
+
+app.title = 'morLAB COVID-19 Dashboard'
 #app = JupyterDash(
 #    __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}]
 #)
