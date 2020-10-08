@@ -17,3 +17,6 @@ data = data.pivot(index='Case identifier number', columns='Case information', va
 
 data.sample(15000).to_csv('./data/Canadian_Covid_Cases_15000.csv')
 data.to_csv('./data/Canadian_Covid_Cases.csv')
+
+os.remove("./data/13100781.csv")
+os.remove("./data/13100781_MetaData.csv")

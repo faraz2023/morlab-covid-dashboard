@@ -126,24 +126,74 @@ counts_total_number=[
                                 html.Div(
                                     [html.H6(id="death_text"), html.P("Deaths")],
                                     id="death",
-                                    className="mini_container",
+                                    className="mini_container one-third column",
                                 ),
                                 html.Div(
                                     [html.H6(id="recovery_text"), html.P("Recovered")],
                                     id="recovery",
-                                    className="mini_container",
+                                    className="mini_container one-third column",
                                 ),
                                  html.Div(
                                     [html.H6(id="total_text"), html.P("Total Cases")],
                                     id="total",
-                                    className="mini_container",
+                                    className="mini_container one-third column",
                                 ),
                             ]
+
+header_row = html.Div(
+            [
+                html.Div(
+                    [
+                        html.Img(
+                            src=app.get_asset_url("logo.png"),
+                            id="plotly-image",
+                            style={
+                                "height": "100px",
+                                "width": "auto",
+                                "margin-bottom": "20px",
+                            },
+                        )
+                    ],
+                    className="one-third column",
+                ),
+                html.Div(
+                    [
+                        html.Div(
+                            [
+                                html.H3(
+                                    "Canadian COVID-19 Cases",
+                                    style={"margin-bottom": "0px"},
+                                ),
+                                html.H5(
+                                    "Prototype Presentation", style={"margin-top": "0px"}
+                                ),
+                            ]
+                        )
+                    ],
+                    className="one-half column",
+                    id="title",
+                ),
+                html.Div(
+                    [
+                        html.A(
+                            html.Button("Learn More", id="learn-more-button"),
+                            href="https://morlab.mie.utoronto.ca/",
+                            target="_blank"
+                        )
+                    ],
+                    className="one-third column",
+                    id="button",
+                ),
+            ],
+            id="header",
+            className="row flex-display",
+            style={"margin-bottom": "25px"},
+    )
 
 # Create app layout
 app.layout = html.Div(
     [
-
+        header_row,
         html.Div(
             [
                 html.Div(
@@ -437,4 +487,4 @@ def make_count_figure(age_group, gender_selector, occupation, week_range):
     figure = dict(data=data, layout=layout_count)
     return figure
 
-app.run_server(debug=True, port=8052)
+app.run_server(debug=True)
