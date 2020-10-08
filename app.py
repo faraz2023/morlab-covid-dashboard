@@ -25,6 +25,9 @@ server = app.server
 #df = pd.read_csv('./data/Canadian_Covid_Cases.csv',index_col=0, low_memory=False)
 
 df = pd.read_csv("https://github.com/faraz2023/morlab-covid-dashboard/raw/master/data/Canadian_Covid_Cases.csv",index_col=0, low_memory=False)
+positivecase_min_week = df['Episode week'].min()
+positivecase_max_week = df['Episode week'].max()
+
 
 #with open("canada1.geojson") as f:
 #    geojson = json.load(f,strict=False)
@@ -243,16 +246,27 @@ app.layout = html.Div(
                     className="dcc_control",
                     ),
                 dcc.Graph(id="individual_graph"),
-       
+
                 ], className="pretty_container five columns",
                     style={"padding":"0", "margin-bottom":"-20px", "padding-left":"20px"},
-
-
-                    
                 ),
             ],
             className="row flex-display",
         ),
+
+        html.Div([
+            html.P("Important Note: The number for Deaths and Recoveries in this dashboard reflect the eventual "
+                   "outcome of case episodes of that week. For example, the number of Deaths in week 20 indicate how many of cases"
+                   "which had episodes at week 20 have so far resulted in deaths."),
+            html.Hr(),
+            html.P("Important Note2: A small percentage of identified cases do not have any proper Episode Week on record. "
+                   "These cases have not been included in this dashboard"),
+            html.Hr(),
+            html.P("The data for this Dashboard is pulled from Statistics Canada, to learn more, go to: "),
+            html.A("Detailed preliminary information on confirmed cases of COVID-19 (Revised), Public Health Agency of Canada",
+                   href='https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1310078101', target="_blank"),
+        ], className="row pretty_container ",
+        style={"padding":"2", "margin-top":"30px", "padding-left":"20px"},)
 
     ],
     id="mainContainer",
@@ -287,8 +301,8 @@ def update_year_slider(count_graph_selected):
 
     if count_graph_selected is None:
         return def_week_range
+    nums = [int(point["x"]) for point in count_graph_selected["points"]]
 
-    nums = [int(point["pointNumber"]) for point in count_graph_selected["points"]]
     return [min(nums), max(nums) + 1]
 
 
@@ -495,19 +509,22 @@ def make_count_figure(age_group, gender_selector, occupation, week_range):
         .to_frame('Count').rename_axis('Episode week') \
         .reset_index()
 
+
     g = count_df[["Count", "Episode week"]]
     g.index = g["Episode week"]
     g = g.sort_index()
-   # g = g.resample("A").count()
-    colors = ['' for i in range(def_week_range[0], def_week_range[1])]
-    for i in range(def_week_range[0], def_week_range[1]):
-        if (i >= int(week_range[0]) and i < int(week_range[1])):
-            colors[i] = "rgb(123, 199, 255)"
-           # colors.append("rgb(223, 199, 255)")
-        else:
-            colors[i] = "rgba(123, 199, 255, 0.2)"
-           # colors.append("rgba(123, 199, 255, 0.2)")
 
+   # g = g.resample("A").count()
+    #colors = ['' for i in range(positivecase_min_week, positivecase_max_week)]
+
+    colors = []
+    for i in range(positivecase_min_week, positivecase_max_week):
+        if (i >= int(week_range[0]) and i < int(week_range[1])):
+            #colors[i] = "rgb(123, 199, 255)"
+            colors.append("rgb(255, 179, 123)")
+        else:
+            #colors[i] = "rgba(123, 199, 255, 0.2)"
+            colors.append("rgba(123, 199, 255, 0.2)")
 
     data = [
         dict(
