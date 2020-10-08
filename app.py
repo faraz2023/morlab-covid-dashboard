@@ -300,25 +300,61 @@ def update_year_slider(count_graph_selected):
         Input("age_group", "value"),
         Input("gender_selector", "value"),
         Input("occupation", "value"),
-
+        Input("week_slider", "value")
     ],
 )
-def update_numbers(age_group, gender_selector, occupation):
+def update_numbers(age_group, gender_selector, occupation, week_range):
     # To do: clean up to use the filter_dataframe function
     if gender_selector == "all":
-        total = df[(df['Age group'].isin(age_group)) & (df['Occupation'].isin(occupation))].shape[0]
-        num_of_death = \
-        df[(df['Death'] == 1) & (df['Age group'].isin(age_group)) & (df['Occupation'].isin(occupation))].shape[0]
-        num_recovered = \
-        df[(df['Recovered'] == 1) & (df['Age group'].isin(age_group)) & (df['Occupation'].isin(occupation))].shape[0]
+        total = df[
+            (df['Age group'].isin(age_group))
+            & (df['Occupation'].isin(occupation))
+            & (df['Episode week'] >= week_range[0])
+            & (df['Episode week'] <= week_range[1])
+        ].shape[0]
+
+        num_of_death = df[
+            (df['Death'] == 1)
+            & (df['Age group'].isin(age_group))
+            & (df['Occupation'].isin(occupation))
+            & (df['Episode week'] >= week_range[0])
+            & (df['Episode week'] <= week_range[1])
+        ].shape[0]
+
+        num_recovered = df[
+            (df['Recovered'] == 1)
+            & (df['Age group'].isin(age_group))
+            & (df['Occupation'].isin(occupation))
+            & (df['Episode week'] >= week_range[0])
+            & (df['Episode week'] <= week_range[1])
+        ].shape[0]
 
     else:
-        num_of_death = df[(df['Death'] == 1) & (df['Gender'] == gender_options.get(gender_selector)) & (
-            df['Age group'].isin(age_group)) & (df['Occupation'].isin(occupation))].shape[0]
-        num_recovered = df[(df['Recovered'] == 1) & (df['Gender'] == gender_options.get(gender_selector)) & (
-            df['Age group'].isin(age_group)) & (df['Occupation'].isin(occupation))].shape[0]
-        total = df[df['Age group'].isin(age_group) & (df['Gender'] == gender_options.get(gender_selector)) & (
-            df['Occupation'].isin(occupation))].shape[0]
+        num_of_death = df[
+            (df['Death'] == 1)
+            & (df['Gender'] == gender_options.get(gender_selector))
+            & (df['Age group'].isin(age_group))
+            & (df['Occupation'].isin(occupation))
+            & (df['Episode week'] >= week_range[0])
+            & (df['Episode week'] <= week_range[1])
+        ].shape[0]
+
+        num_recovered = df[
+            (df['Recovered'] == 1)
+            & (df['Gender'] == gender_options.get(gender_selector))
+            & (df['Age group'].isin(age_group))
+            & (df['Occupation'].isin(occupation))
+            & (df['Episode week'] >= week_range[0])
+            & (df['Episode week'] <= week_range[1])
+        ].shape[0]
+
+        total = df[
+            df['Age group'].isin(age_group)
+            & (df['Gender'] == gender_options.get(gender_selector))
+            & (df['Occupation'].isin(occupation))
+            & (df['Episode week'] >= week_range[0])
+            & (df['Episode week'] <= week_range[1])
+        ].shape[0]
 
     return [num_of_death, num_recovered, total]
 
