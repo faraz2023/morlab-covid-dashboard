@@ -22,10 +22,11 @@ server = app.server
 
 #df = pd.read_csv('./data/Canadian_Covid_Cases.csv',index_col=0, low_memory=False)
 
-df = pd.read_csv('https://github.com/faraz2023/morlab-covid-dashboard/raw/master/data/Canadian_Covid_Cases.csv',index_col=0, low_memory=False)
+df = pd.read_csv("https://github.com/faraz2023/morlab-covid-dashboard/raw/master/data/Canadian_Covid_Cases.csv",index_col=0, low_memory=False)
+
 #with open("canada1.geojson") as f:
 #    geojson = json.load(f,strict=False)
-geojson = gpd.read_file('canada1.geojson')
+geojson = gpd.read_file('https://github.com/faraz2023/morlab-covid-dashboard/raw/master/canada1.geojson')
 geojson['geometry'] = geojson['geometry'].simplify(0.5, preserve_topology=False)
 
 layout = dict(
