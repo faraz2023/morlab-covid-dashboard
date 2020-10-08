@@ -403,18 +403,18 @@ def make_individual_figure(main_graph_hover,line_type,age_group,gender_selector,
         data = weekly_data.groupby(["Episode week"]).size().to_frame('Total Cases').reset_index()
 
         fig = px.line(data, x='Episode week', y='Total Cases')
-        fig.update_yaxes(range=[0, 900])
+       # fig.update_yaxes(range=[0, 900])
 
         
     elif line_type=="recovered":
         
         fig = px.line(recovered_data, x='Episode week', y='Recovered')
-        fig.update_yaxes(range=[0, 900])
+      #  fig.update_yaxes(range=[0, 900])
 
     elif line_type=="death":
  
         fig = px.line(death_data, x='Episode week', y='Death')
-        fig.update_yaxes(range=[0, 200])
+    #    fig.update_yaxes(range=[0, 200])
         
     fig.update_traces(mode='lines+markers')
     fig.update_layout(autosize=True,margin={"r": 0, "t":5, "l":50, "b":10})
