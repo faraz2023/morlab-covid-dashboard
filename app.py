@@ -1,11 +1,6 @@
 # Import required libraries
-import pickle
 import copy
 import dash
-import pathlib
-from jupyter_dash import JupyterDash
-import math
-import datetime as dt
 import pandas as pd
 import numpy as np
 from dash.dependencies import Input, Output, State, ClientsideFunction
@@ -13,7 +8,6 @@ import dash_core_components as dcc
 import dash_html_components as html
 from covid_controls import Age_Group,Occupation
 import plotly.express as px
-import json
 import geopandas as gpd
 
 def_week_range = [0,53]
@@ -487,4 +481,4 @@ def make_count_figure(age_group, gender_selector, occupation, week_range):
     figure = dict(data=data, layout=layout_count)
     return figure
 
-app.run_server(debug=True)
+app.run_server()
