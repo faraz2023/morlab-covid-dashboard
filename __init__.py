@@ -25,7 +25,7 @@ except: #if running locally
 def_week_range = [0,53]
 
 app = dash.Dash(
-     __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}],requests_pathname_prefix='/coviddash/'
+     __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}],routes_pathname_prefix='/coviddash/',requests_pathname_prefix='/coviddash/'
  )
 #app = JupyterDash(
 #    __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}]
