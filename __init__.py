@@ -6,12 +6,21 @@ import numpy as np
 from dash.dependencies import Input, Output, State, ClientsideFunction
 import dash_core_components as dcc
 import dash_html_components as html
-from covidDash.covid_controls import Age_Group,Occupation
 import plotly.express as px
 import dash
 import os
 
 import geopandas as gpd
+
+try: #if running on the vps
+    from covidDash.covid_controls import Age_Group, Occupation
+    df = pd.read_csv('/var/www/html/flask/covidDash/covidDash/data/Canadian_Covid_Cases.csv', index_col=0,low_memory=False)
+    geojson = gpd.read_file('https://github.com/faraz2023/morlab-covid-dashboard/raw/master/canada1.geojson')
+
+except: #if running locally
+    from covid_controls import Age_Group, Occupation
+    df = pd.read_csv('./data/Canadian_Covid_Cases.csv',index_col=0, low_memory=False)
+    geojson = gpd.read_file('./canada1.geojson')
 
 def_week_range = [0,53]
 
@@ -25,17 +34,12 @@ app.title = 'morLAB COVID-19 Dashboard'
 #    __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}]
 #)
 
-df = pd.read_csv('/var/www/html/flask/covidDash/covidDash/data/Canadian_Covid_Cases.csv',index_col=0, low_memory=False)
-#df = pd.read_csv('./data/Canadian_Covid_Cases.csv',index_col=0, low_memory=False)
 
 positivecase_min_week = df['Episode week'].min()
 positivecase_max_week = df['Episode week'].max()
 
 
-#with open("canada1.geojson") as f:
-#    geojson = json.load(f,strict=False)
-geojson = gpd.read_file('https://github.com/faraz2023/morlab-covid-dashboard/raw/master/canada1.geojson')
-#geojson = gpd.read_file('./canada1.geojson')
+
 
 geojson['geometry'] = geojson['geometry'].simplify(0.5, preserve_topology=False)
 
