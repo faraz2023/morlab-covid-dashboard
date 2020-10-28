@@ -477,6 +477,9 @@ def make_individual_figure(main_graph_hover,line_type,age_group,gender_selector,
     
     chosen = np.asarray([point["customdata"] for point in main_graph_hover["points"]]).flatten()
     filtered_df = filter_dataframe(df, age_group, gender_selector, occupation, week_range)
+
+    if filtered_df.empty:
+        return {}
     
     #Show canada-wide graph if user hasn't hovered on any regions
     if int(chosen[0])==0:
