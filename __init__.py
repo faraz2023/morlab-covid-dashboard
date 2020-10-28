@@ -9,6 +9,7 @@ import dash_html_components as html
 import plotly.express as px
 import dash
 import os
+import dash_auth
 
 import geopandas as gpd
 
@@ -16,21 +17,34 @@ try: #if running on the vps
     from covidDash.covid_controls import Age_Group, Occupation
     df = pd.read_csv('/var/www/html/flask/covidDash/covidDash/data/Canadian_Covid_Cases.csv', index_col=0,low_memory=False)
     geojson = gpd.read_file('https://github.com/faraz2023/morlab-covid-dashboard/raw/master/canada1.geojson')
+    app = dash.Dash(
+        __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}],
+        requests_pathname_prefix='/coviddash/'
+    )
 
 except: #if running locally
     from covid_controls import Age_Group, Occupation
     df = pd.read_csv('./data/Canadian_Covid_Cases.csv',index_col=0, low_memory=False)
     geojson = gpd.read_file('./canada1.geojson')
+    app = dash.Dash(
+        __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}],
+        routes_pathname_prefix='/coviddash/', requests_pathname_prefix='/coviddash/'
+    )
 
 def_week_range = [0,53]
 
-app = dash.Dash(
-     __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}],routes_pathname_prefix='/coviddash/',requests_pathname_prefix='/coviddash/'
- )
 #app = JupyterDash(
 #    __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}]
 #)
 
+VALID_USERNAME_PASSWORD_PAIRS = {
+    'admin': 'admin'
+}
+
+auth = dash_auth.BasicAuth(
+    app,
+    VALID_USERNAME_PASSWORD_PAIRS
+)
 
 
 app.title = 'morLAB COVID-19 Dashboard'
