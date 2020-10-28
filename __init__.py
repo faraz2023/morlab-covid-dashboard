@@ -9,6 +9,7 @@ import dash_html_components as html
 import plotly.express as px
 import dash
 import os
+import dash_auth
 
 import geopandas as gpd
 
@@ -24,13 +25,22 @@ except: #if running locally
 
 def_week_range = [0,53]
 
+
 app = dash.Dash(
-     __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}],requests_pathname_prefix='/coviddash/'
+     __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}], serve_locally = False
  )
 #app = JupyterDash(
 #    __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}]
 #)
 
+VALID_USERNAME_PASSWORD_PAIRS = {
+    'admin': 'admin'
+}
+
+auth = dash_auth.BasicAuth(
+    app,
+    VALID_USERNAME_PASSWORD_PAIRS
+)
 
 
 app.title = 'morLAB COVID-19 Dashboard'
