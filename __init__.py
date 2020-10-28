@@ -27,12 +27,13 @@ def_week_range = [0,53]
 app = dash.Dash(
      __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}],requests_pathname_prefix='/coviddash/'
  )
-
-
-app.title = 'morLAB COVID-19 Dashboard'
 #app = JupyterDash(
 #    __name__, meta_tags=[{"name": "viewport", "content": "width=device-width"}]
 #)
+
+
+
+app.title = 'morLAB COVID-19 Dashboard'
 
 
 positivecase_min_week = df['Episode week'].min()
@@ -242,18 +243,16 @@ app.layout = html.Div(
                 
                 html.Div([
                     
-                    dcc.RadioItems(
-                    id="line_type",
-                        options=[
-                    {"label": "Total Cases", "value": "total"},
-                    {"label": "Recovered", "value": "recovered"},
-                    {"label": "Deaths", "value": "death"},
-      
+                   dcc.Checklist(
+                    id="line_type",   
+                    options=[
+                        {'label': 'Total cases', 'value': 'total'},
+                        {'label': 'Recovered', 'value': 'recovered'},
+                        {'label': 'Deaths', 'value': 'death'}
                     ],
-                    value="total",
-                    labelStyle={"display": "inline-block", "padding-right": "4px", "margin-top":"0px"},
+                    value=['total','recovered','death'],
+                    labelStyle={'display': 'inline-block',"padding-right": "4px", "margin-top":"0px"},
                     inputStyle={"margin-right":"5px"},
-                    className="dcc_control",
                     ),
                 dcc.Graph(id="individual_graph"),
 
@@ -464,34 +463,53 @@ def make_individual_figure(main_graph_hover,line_type,age_group,gender_selector,
     
     chosen = np.asarray([point["customdata"] for point in main_graph_hover["points"]]).flatten()
     filtered_df = filter_dataframe(df, age_group, gender_selector, occupation, week_range)
-    weekly_data = filtered_df[(filtered_df["Episode week"] != 99)& (filtered_df['Region'] == int(chosen[0]))]
+    
+    #Show canada-wide graph if user hasn't hovered on any regions
+    if int(chosen[0])==0:
+        weekly_data = filtered_df[(filtered_df["Episode week"] != 99)]
+    else: 
+        weekly_data = filtered_df[(filtered_df["Episode week"] != 99)& (filtered_df['Region'] == int(chosen[0]))]
 
     
     rc_weekly_data=weekly_data[weekly_data['Recovered']==1]
     recovered_data = rc_weekly_data.groupby(["Episode week"]).size().to_frame('Recovered').reset_index()
     d_weekly_data=weekly_data[weekly_data['Death']==1]
     death_data = d_weekly_data.groupby(["Episode week"]).size().to_frame('Death').reset_index()
-    x_axis=df['Episode week']
+   
     
+    value_vars=[]
+    result = pd.DataFrame((), columns=['Episode week'])
 
-    if line_type=="total":
+    
+    #when no line_type is selected show total cases
+    if (len(line_type)==0):
+        result = weekly_data.groupby(["Episode week"]).size().to_frame('Total Cases').reset_index()
+        value_vars.append("Total Cases")
 
-        data = weekly_data.groupby(["Episode week"]).size().to_frame('Total Cases').reset_index()
+    if "total" in (line_type):
 
-        fig = px.line(data, x='Episode week', y='Total Cases')
-       # fig.update_yaxes(range=[0, 900])
+        result = weekly_data.groupby(["Episode week"]).size().to_frame('Total Cases').reset_index()
+        value_vars.append("Total Cases")
 
         
-    elif line_type=="recovered":
+    if "recovered" in (line_type):
         
-        fig = px.line(recovered_data, x='Episode week', y='Recovered')
-      #  fig.update_yaxes(range=[0, 900])
+        result = result.merge(recovered_data.astype('int').astype('Int64'), how='outer', on="Episode week").fillna(0)
+        value_vars.append("Recovered")
 
-    elif line_type=="death":
- 
-        fig = px.line(death_data, x='Episode week', y='Death')
-    #    fig.update_yaxes(range=[0, 200])
+
+    if "death" in (line_type):
         
+        result = result.merge(death_data.astype('int').astype('Int64'), how='outer', on="Episode week").fillna(0)
+        value_vars.append("Death")
+
+    df_long=pd.melt(result, id_vars=['Episode week'], value_vars=value_vars)
+    df_long=df_long.rename(columns={'value': 'Number', 'variable':'type'})
+
+    fig = px.line(df_long, x='Episode week', y='Number', color='type')
+
+    
+    fig.update_yaxes(range=[0,12000])  
     fig.update_traces(mode='lines+markers')
     fig.update_layout(autosize=True,margin={"r": 0, "t":5, "l":50, "b":10})
          
