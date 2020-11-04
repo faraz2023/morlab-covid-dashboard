@@ -410,15 +410,15 @@ def update_numbers(age_group, gender_selector, occupation, week_range):
 )
 def make_main_figure(age_group, gender_selector, occupation, week_range):
     filtered_df = filter_dataframe(df, age_group, gender_selector, occupation, week_range)
+    filtered_df = filtered_df.astype({'Region': "int32"})
     death_number = filtered_df[filtered_df["Death"] == 1].groupby('Region').size()
-    
+
     
     for i in range(1,6):
         if i not in death_number.index:
             death_number[i]=0
 
 
-    print("I am first")
 
     data = {'Code': ["CA01", "CA11", "CA03", "CA05", "CA09", "CA07", "CA06", "CA13", "CA08", "CA04", "CA12", "CA02",
                      "CA10"],
