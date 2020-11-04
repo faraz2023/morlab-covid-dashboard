@@ -418,8 +418,7 @@ def make_main_figure(age_group, gender_selector, occupation, week_range):
             death_number[i]=0
 
 
-
-     
+    print("I am first")
 
     data = {'Code': ["CA01", "CA11", "CA03", "CA05", "CA09", "CA07", "CA06", "CA13", "CA08", "CA04", "CA12", "CA02",
                      "CA10"],
@@ -442,7 +441,8 @@ def make_main_figure(age_group, gender_selector, occupation, week_range):
                                opacity=0.5,
                                labels={'Region Name':'Region'}
                                )
-    
+
+
     
     fig.update_layout(legend=dict(
     orientation="h",
@@ -511,13 +511,13 @@ def make_individual_figure(main_graph_hover,line_type,age_group,gender_selector,
         
     if "recovered" in (line_type):
         
-        result = result.merge(recovered_data.astype('int').astype('Int64'), how='outer', on="Episode week").fillna(0)
+        result = result.merge(recovered_data.astype('int'), how='outer', on="Episode week").fillna(0)
         value_vars.append("Recovered")
 
 
     if "death" in (line_type):
         
-        result = result.merge(death_data.astype('int').astype('Int64'), how='outer', on="Episode week").fillna(0)
+        result = result.merge(death_data.astype('int'), how='outer', on="Episode week").fillna(0)
         value_vars.append("Death")
 
     df_long=pd.melt(result, id_vars=['Episode week'], value_vars=value_vars)
