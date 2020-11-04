@@ -50,8 +50,8 @@ auth = dash_auth.BasicAuth(
 app.title = 'morLAB COVID-19 Dashboard'
 
 
-positivecase_min_week = df['Episode week'].min()
-positivecase_max_week = df['Episode week'].max()
+positivecase_min_week = int(df['Episode week'].min())
+positivecase_max_week = int(df['Episode week'].max())
 
 
 
